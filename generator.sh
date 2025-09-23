@@ -13,31 +13,23 @@
 #   hasta que se cumple el tiempo total.
 # -----------------------------
 
-# Valores por defecto
-INTERVAL=1
-TOTAL=10
 
-# Leer parámetros
 while getopts "i:t:" opt; do
   case $opt in
-    i) INTERVAL=$OPTARG ;;
-    t) TOTAL=$OPTARG ;;
-    *) echo "Uso: $0 -i <intervalo> -t <tiempo>" >&2; exit 1 ;;
+    i) intervalo=$OPTARG ;;
+    t) total=$OPTARG ;;
+    *) echo "no se pudo llevar a cabo" >&2; exit 1 ;;
   esac
 done
 
-# Calcular cuántas iteraciones hacer
-ITERATIONS=$((TOTAL / INTERVAL))
+iteraciones=$((total / intervalo))
 
-# Bucle de muestreo
-for ((n=0; n<ITERATIONS; n++)); do
-  # Capturar timestamp en formato UNIX (segundos)
+for ((n=0; n<iteraciones; n++)); do
+
   TIMESTAMP=$(date +%s)
 
-  # Ejecutar ps y añadir timestamp como primera columna
   ps -eo pid=,uid=,comm=,pcpu=,pmem= --sort=-%cpu \
   | awk -v ts="$TIMESTAMP" '{print ts, $0}'
 
-  # Esperar el intervalo
-  sleep "$INTERVAL"
+  sleep "$intervalo"
 done
