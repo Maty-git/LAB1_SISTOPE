@@ -14,12 +14,15 @@ fi
 
 while read -r line; do
 
+  # Usamos awk para extraer los campos desde atrás (CPU y MEM siempre son los últimos dos números)
   ts=$(awk '{print $1}' <<< "$line")
   pid=$(awk '{print $2}' <<< "$line")
   uid=$(awk '{print $3}' <<< "$line")
-  comm=$(awk '{print $4}' <<< "$line")
-  cpu=$(awk '{print $5}' <<< "$line")
-  mem=$(awk '{print $6}' <<< "$line")
+  cpu=$(awk '{print $(NF-1)}' <<< "$line")
+  mem=$(awk '{print $NF}' <<< "$line")
+  # El comando es todo lo que queda en el medio
+  comm=$(awk '{for (i=4; i<=NF-2; i++) printf $i (i<NF-2?OFS:"")}' OFS=" " <<< "$line")
+
 
   [[ "$ts" =~ ^[0-9]+$ ]] || continue
   [[ "$pid" =~ ^[0-9]+$ ]] || continue
