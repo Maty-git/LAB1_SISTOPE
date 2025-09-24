@@ -1,12 +1,21 @@
 #!/bin/bash
+
 # -----------------------------
 # filter.sh
-# Filtra procesos según:
+# Entradas:
+#   salida de preprocess.sh conectada por pipe donde cada 
+#   line tiene un formato: ts pid uid comm cpu mem.
+#   adicionalmente los parametros de:
+#   -c <cpu_min>, -m <mem_min>, -r <regex>
+# Salidas:
+#   Imprime los datos filtrados con un formato:
+#   ts, pid, uid, comm, %cpu y %mem
+# Descripción:
+#   Filtra procesos según:
 #   -c <cpu_min>   : uso mínimo de CPU (%)
 #   -m <mem_min>   : uso mínimo de MEM (%)
 #   -r <regex>     : regex para el nombre de comando
 # -----------------------------
-
 
 while getopts "c:m:r:" opt; do
   case "$opt" in

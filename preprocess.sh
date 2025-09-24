@@ -2,9 +2,16 @@
 
 # -----------------------------
 # preprocess.sh
-# Valida y normaliza la salida de generator.sh
-# Opciones:
-#   --iso8601 : convierte el timestamp UNIX a formato ISO 8601
+# Entradas:
+#   salida de generator.sh conectada por pipe donde cada 
+#   line tiene un formato: ts pid uid comm cpu mem
+# Salidas:
+#   Imprime los datos pre-procesados con un formato:
+#   ts, pid, uid, comm, %cpu y %mem
+# Descripción:
+#   valida formatos y tipos de datos para su posterior filtrado
+#   adicionalmente se puede convertir el timestamp a ISO8601 
+#   escibiendo "--iso8601" luego de "./preprocess.sh"
 # -----------------------------
 
 ISO8601=false
