@@ -15,9 +15,15 @@
 #   -c y -m son obligatorios, -r es opcional.
 # -----------------------------
 
-# -----------------------------
-# Función: validarNumero
-# Valida que el argumento sea un número positivo (entero o decimal).
+# ----------------------------- 
+# Función: validarNumero 
+# Entradas: 
+#   numero entero o flotante 
+# Salidas: 
+#   error en caso de que no sea valido 
+# Descripción: 
+#   valida que un numero sea positivo incluyendo el 0 
+#   si no cumple muestra mensaje de error 
 # -----------------------------
 validarNumero() {
   local num="$1"
@@ -33,14 +39,14 @@ validarNumero() {
 #   linea por linea generada por preprocess.sh
 # Salidas:
 #   ts, pid, uid, comm, %cpu y %mem
-#   como variables locales
+#   como variable que luego se filtrara
 # Descripción:
 #   parsea la entrada (linea) de texto, con el fin de descomponerlo
 #   en variables que se puedan filtrar
 # -----------------------------
 parsearEntrada() {
   local line="$1"
-
+  # separar los campos  en varriables para verificar
   ts=$(awk '{print $1}' <<< "$line")
   pid=$(awk '{print $2}' <<< "$line")
   uid=$(awk '{print $3}' <<< "$line")
@@ -57,10 +63,9 @@ parsearEntrada() {
 #   linea por linea de texto generada por preprocess.sh
 # Salidas:
 #   ts, pid, uid, comm, %cpu y %mem
-#   como variables locales
 # Descripción:
-#   parsea la entrada (linea) de texto, con el fin de descomponerlo
-#   en variables que se puedan filtrar
+#   filtra las variables parseadas con los criterios de 
+#   cpu, mem, y regex o nombre
 # -----------------------------
 filtrarDatos() {
   local ts="$1"
@@ -95,7 +100,7 @@ main() {
     esac
   done
 
-  # Leer línea por línea
+  # parsear y filtrar linea por linea
   while read -r line; do
     linea=$(parsearEntrada "$line")
     IFS="|" read -r ts pid uid comm cpu mem <<< "$linea"

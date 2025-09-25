@@ -6,17 +6,23 @@
 #   -i <intervalo> : cada cuántos segundos capturar
 #   -t <tiempo>    : tiempo total de captura
 # Salidas:
-#   Imprime en stdout (para que se pueda usar con pipes)
-#   las líneas con pid, uid, comm, %cpu y %mem
+#   Imprime en stdout (para usar con pipes)
+#   las líneas con ts, pid, uid, comm, %cpu y %mem
 # Descripción:
 #   Recolecta datos del sistema usando ps en intervalos definidos
-#   hasta que se cumple el tiempo total.
+#   hasta que se cumple el tiempo total
 # -----------------------------
 
 # -----------------------------
 # Función: validador
-# Valida los parámetros recibidos y calcula el número de iteraciones
-# Retorna: número de iteraciones
+# Entradas:
+#   variables $intervalo y $total
+# Salidas:
+#   número de iteraciones (entero positivo)
+# Descripción:
+#   valida que los parámetros -i y -t sean enteros positivos,
+#   que tengan una division lógica y retorna cuántas veces se debe
+#   ejecutar ps
 # -----------------------------
 validador() {
   local re_num='^[0-9]+$'
@@ -39,7 +45,14 @@ validador() {
 
 # -----------------------------
 # Función: ejecutarPs
-# Ejecuta ps cada intervalo hasta completar iteraciones
+# Entradas:
+#   número de iteraciones
+# Salidas:
+#   en cada iteración captura procesos con:
+#   ts, pid, uid, comm, %cpu y %mem
+# Descripción:
+#   ejecuta ps en intervalos definidos, anteponiendo el timestamp
+#   UNIX actual en cada línea
 # -----------------------------
 ejecutarPs() {
   local iteraciones=$1
@@ -55,7 +68,7 @@ ejecutarPs() {
 }
 
 # -----------------------------
-# Función principal: main
+# Función principal main
 # -----------------------------
 main() {
   # Leer parámetros
