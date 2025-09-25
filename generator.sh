@@ -13,23 +13,67 @@
 #   hasta que se cumple el tiempo total.
 # -----------------------------
 
+# -----------------------------
+# Función: validador
+# Valida los parámetros recibidos y calcula el número de iteraciones
+# Retorna: número de iteraciones
+# -----------------------------
+validador() {
+  local re_num='^[0-9]+$'
 
-while getopts "i:t:" opt; do
-  case $opt in
-    i) intervalo=$OPTARG ;;
-    t) total=$OPTARG ;;
-    *) echo "no se pudo llevar a cabo" >&2; exit 1 ;;
-  esac
-done
+  # Validar que sean números enteros
+  if ! [[ "$intervalo" =~ $re_num && "$total" =~ $re_num ]]; then
+      echo "Los parámetros -i y -t deben ser enteros positivos" >&2
+      exit 1
+  fi
 
-iteraciones=$((total / intervalo))
+  # Validar rangos lógicos
+  if [[ "$intervalo" -lt 1 || "$total" -lt "$intervalo" ]]; then
+      echo "Los parámetros no son válidos: -i >= 1 y -t >= -i" >&2
+      exit 1
+  fi
 
-for ((n=0; n<iteraciones; n++)); do
+  # Calcular iteraciones y retornarlas
+  echo $((total / intervalo))
+}
 
-  TIMESTAMP=$(date +%s)
+# -----------------------------
+# Función: ejecutarPs
+# Ejecuta ps cada intervalo hasta completar iteraciones
+# -----------------------------
+ejecutarPs() {
+  local iteraciones=$1
 
-  ps -eo pid=,uid=,comm=,pcpu=,pmem= --sort=-%cpu \
-  | awk -v ts="$TIMESTAMP" '{print ts, $0}'
+  for ((n=0; n<iteraciones; n++)); do
+    TIMESTAMP=$(date +%s)
 
-  sleep "$intervalo"
-done
+    ps -eo pid=,uid=,comm=,pcpu=,pmem= --sort=-%cpu \
+    | awk -v ts="$TIMESTAMP" '{print ts, $0}'
+
+    sleep "$intervalo"
+  done
+}
+
+# -----------------------------
+# Función principal: main
+# -----------------------------
+main() {
+  # Leer parámetros
+  while getopts "i:t:" opt; do
+    case $opt in
+      i) intervalo=$OPTARG ;;
+      t) total=$OPTARG ;;
+      *) echo "Uso: $0 -i <intervalo> -t <tiempo>" >&2; exit 1 ;;
+    esac
+  done
+
+  # Validar y calcular iteraciones
+  local iteraciones
+  iteraciones=$(validador)
+
+  # Ejecutar ps con los parámetros validados
+  ejecutarPs "$iteraciones"
+}
+
+# Llamar a main con todos los argumentos
+main "$@"
