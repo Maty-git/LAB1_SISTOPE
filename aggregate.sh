@@ -1,12 +1,16 @@
 #!/bin/bash
 # -----------------------------
 # aggregate.sh
-# Entradas:
-#   stdin en formato: ts pid uid comm cpu mem
-# Salida:
-#   stdout agrupado por comm con métricas:
-#   comando, num_procesos, cpu_prom, cpu_max, mem_prom, mem_max
+# Entradas: Recibe el ts, pid, uid, comm, cpu y mem
+# Salida: agrupa los comandos con metricas de la forma:
+# comando, num_procesos, cpu_prom, cpu_max, mem_prom y mem_max
+# Descripción: Hace el calculo de las metricas para luego agrupar por comandos
 # -----------------------------
+
+if [[ $# -ne 0 ]]; then
+  echo "Esta funcion no acepta argumentos de entrada"
+  exit
+fi
 
 awk '
 {
