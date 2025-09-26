@@ -16,7 +16,7 @@ if [[ -z "$OUT" ]]; then
   exit
 fi
 
-if [[ "$OUT" != *.csv || "$OUT" != *.xlsx ]]; then
+if [[ "$OUT" != *.csv && "$OUT" != *.xlsx ]]; then
   echo "Solo se admiten archivos de salida con extensión .csv o .xlsx"
   exit
 fi
