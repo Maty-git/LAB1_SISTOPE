@@ -1,1 +1,0 @@
-./generator.sh -i 2 -t 10 | ./preprocess.sh --iso8601 | ./filter.sh -c 5 -m 5 -r "^(firefox)$"
